@@ -11,7 +11,10 @@
 /*********** typedef  ***********/
 
 typedef struct  Sock_Channel_T{
+/*  sock server fd */
 int fd;
+/*  sock appid  to identify unix domain sock path*/
+pid_t app_id;
 
 
 }Sock_Channel_T;
@@ -35,6 +38,7 @@ bool sock_create(Sock_Channel_T *  channel)
 	pid_t  pid = getpid();
         int fd = socket(AF_LOCAL, SOCK_STREAM, 0);
 	channel->fd = fd;
+	channel->app_id = pid;
         /* create unix sock by process id*/
 	struct sockaddr_un addr;
 	snprintf(addr.sun_path, sizeof(addr.sun_path),"/tmp/sock_%d",(int)pid);
