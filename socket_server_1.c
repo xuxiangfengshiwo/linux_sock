@@ -29,9 +29,9 @@ bool sock_sync_recv(Sock_Channel_T * server_channel, void * buf, size_t buf_len,
 
 bool sock_sync_reply(SockRecvfd  client, const void * buf, size_t buf_len);
 
-/*  socket client side send  &&  recv  */
+/*  socket client side send  without  recv  */
 
-bool sock_sync_send(Sock_Channel_T * server_channel, void * buf, size_t buf_len);
+bool sock_sync_sendN(Sock_Channel_T * server_channel, void * buf, size_t buf_len);
 /***********  create unix socket server***********/
 /*************
 @para: channel
@@ -113,10 +113,19 @@ bool sock_sync_reply(SockRecvfd  client,const void * buf, size_t buf_len)
 	close(client);
 }
 
-bool sock_sync_send(Sock_Channel_T * server_channel, void * buf, size_t buf_len)
+
+/*    unix socket client-->server
+@para[server_channel]:target server channel
+@para[buf]: sent data
+@para[buf_len]: size of buf 
+*/
+
+bool sock_sync_sendN(Sock_Channel_T * server_channel, void * buf, size_t buf_len)
 {
 	SockRecvfd client;
         struct sockaddr_un addr;
+	struct iovec msg_send[1];
+	bool status = false;
 		
 	client = socket(AF_UNIX, O_CLOEXEC|SOCK_STREAM, 0 );
 	 /* connect unix sock by process id*/
@@ -124,7 +133,19 @@ bool sock_sync_send(Sock_Channel_T * server_channel, void * buf, size_t buf_len)
         snprintf(addr.sun_path, sizeof(addr.sun_path),"/tmp/sock_%d",(int)(server_channel->app_id));
         addr.sun_family = AF_LOCAL;
 	
-	connect(client, (struct sockaddr *)(void *)&addr, sizeof(addr));
+	if(connect(client, (struct sockaddr *)(void *)&addr, sizeof(addr))>=0)
+	{
+		msg_send[0].iov_base = buf;
+		msg_send[0].iov_len  = buf_len;
+
+		if(writev(client, msg_send, 1) == buf_len)
+		{
+			status = true;
+		}
+	}
+	close(client);
+
+	return status;
 	
 }
 
