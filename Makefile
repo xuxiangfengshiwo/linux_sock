@@ -1,9 +1,9 @@
 
-all:socket_server_1
+all:socket_server
 
-socket_server_1: socket_server_1.c
-	gcc -o socket_server_1 socket_server_1.c 
+socket_server: socktest_server.c
+	gcc -o socket_server socktest_server.c socket_server_1.c 
 clean:	
-	rm -rf socket_server_1
+	rm -rf socket_server
 
 
