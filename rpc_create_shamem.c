@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
+#include "rpc_shamem.h"
 
 bool Rpc_Create_ShaMem(int key, size_t size, Rpc_Open_ShaMem_Mode_T mode, Rpc_ShaMem_Handle_T *  handle)
 {

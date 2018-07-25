@@ -1,8 +1,11 @@
 #include "log_setting.h"
 #include "x_assert.h"
 #include "x_data_types.h"
+
 #include "stdio.h"
 #include "stdbool.h"
+
+#include "rpc_shamem.h"
 
 bool Rpc_Close_ShaMem(Rpc_ShaMem_Handle_T *  handle)
 {
